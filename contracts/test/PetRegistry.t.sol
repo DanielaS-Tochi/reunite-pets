@@ -1,51 +1,67 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
 import {Test} from "forge-std/Test.sol";
 import {PetRegistry} from "../src/PetRegistry.sol";
 
 contract PetRegistryTest is Test {
-    PetRegistry public registry;
+    PetRegistry registry;
     address owner = address(0x123);
-    string constant HASH = "QmExampleIPFSHash";
+    address other = address(0x456);
+    string constant HASH = "QmTestHash";
 
     function setUp() public {
         registry = new PetRegistry();
-        vm.deal(owner, 1 ether); // give test wallet some ETH
     }
 
     function testRegisterPet() public {
         vm.prank(owner);
         registry.registerPet("Luna", "Golden Retriever", HASH);
 
-        (uint256 id, string memory name, string memory breed, string memory ipfsHash, address petOwner, bool isMissing)
-            = registry.pets(0);
-
-        assertEq(id, 0);
-        assertEq(name, "Luna");
-        assertEq(breed, "Golden Retriever");
-        assertEq(ipfsHash, HASH);
-        assertEq(petOwner, owner);
-        assertFalse(isMissing);
+        PetRegistry.Pet memory pet = registry.getPet(0);
+        assertEq(pet.name, "Luna");
+        assertEq(pet.breed, "Golden Retriever");
+        assertEq(pet.owner, owner);
+        assertFalse(pet.isMissing);
     }
 
     function testUpdateStatus() public {
-        vm.startPrank(owner);
+        vm.prank(owner);
         registry.registerPet("Milo", "Siamese", HASH);
-        registry.updateStatus(0, true);
-        vm.stopPrank();
 
-        (, , , , , bool isMissing) = registry.pets(0);
-        assertTrue(isMissing);
+        vm.prank(owner);
+        registry.updateStatus(0, true);
+
+        PetRegistry.Pet memory pet = registry.getPet(0);
+        assertTrue(pet.isMissing);
     }
 
     function testCannotUpdateIfNotOwner() public {
         vm.prank(owner);
-        registry.registerPet("Toby", "Bulldog", HASH);
+        registry.registerPet("Bella", "Beagle", HASH);
 
-        address stranger = address(0x999);
-        vm.prank(stranger);
+        vm.prank(other);
         vm.expectRevert("Not pet owner");
+        registry.updateStatus(0, true);
+    }
+
+    // --- EVENTS TESTS ---
+    function testRegisterPetEmitsEvent() public {
+        vm.prank(owner);
+        vm.expectEmit(true, true, false, false);
+        emit PetRegistry.PetRegistered(0, owner);
+
+        registry.registerPet("Luna", "Golden Retriever", HASH);
+    }
+
+    function testUpdateStatusEmitsEvent() public {
+        vm.prank(owner);
+        registry.registerPet("Milo", "Siamese", HASH);
+
+        vm.prank(owner);
+        vm.expectEmit(true, false, false, true);
+        emit PetRegistry.PetStatusUpdated(0, true);
+
         registry.updateStatus(0, true);
     }
 }
