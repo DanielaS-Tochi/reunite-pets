@@ -5,6 +5,8 @@
 # Node / frontend
 node_modules/
 .next/
+out/
+build/
 .env
 .env.local
 .env.development.local
@@ -25,29 +27,34 @@ logs/
 Thumbs.db
 
 # =========================
-# Frontend / Next.js
-# =========================
-.next/
-out/
-build/
-
-# =========================
 # Foundry / Solidity
 # =========================
 # Compilation artifacts
-out/
-cache/
-lib/
-solidity-files-cache.json
+contracts/out/
+contracts/cache/
+contracts/lib/
+contracts/solidity-files-cache.json
 *.dbg.json
-*.json   # opcional: si solo querés ignorar JSON de compilación, no los ABIs que quieras versionar
 
-# Script / temp files
+# Script / test files
 *.s.sol
 *.t.sol
 
 # =========================
-# Misc
+# IPFS / Lighthouse / storage
+# =========================
+ipfs/
+.lighthouse/
+
+# =========================
+# IDE / Editor
 # =========================
 .vscode/
 .idea/
+*.swp
+
+# =========================
+# Misc
+# =========================
+# Optional: ignore JSON files from compilation, but keep ABIs if needed
+# *.json
