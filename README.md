@@ -48,6 +48,14 @@ This project was **scaffolded and planned with AI assistance (ChatGPT)**.
 All code, tests, and deployment steps were developed and human-reviewed during **ETHOnline 2025**.
 
 ---
+## 📝 Contracts & Testing
+
+- **PetRegistry.sol**: On-chain pet registration, status updates, and owner mapping.
+- **Donations.sol**: Donation tracking, voting for shelters, and community-driven allocation.
+- **Tests**: All contracts tested using Foundry (`forge test`) with 100% pass rate.
+- **Events**: PetRegistered, PetStatusUpdated, VoteCast, DonationDistributed.
+- **IPFS Support**: Images and pet metadata stored off-chain for transparency and scalability.
+---
 
 ## ❤️ Future Features
 
