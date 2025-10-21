@@ -22,7 +22,7 @@ contract PetRegistryTest is Test {
         assertEq(pet.name, "Luna");
         assertEq(pet.breed, "Golden Retriever");
         assertEq(pet.owner, owner);
-        assertFalse(pet.isMissing);
+        assertEq(uint(pet.status), uint(PetRegistry.PetStatus.Home));
     }
 
     function testUpdateStatus() public {
@@ -30,10 +30,10 @@ contract PetRegistryTest is Test {
         registry.registerPet("Milo", "Siamese", HASH);
 
         vm.prank(owner);
-        registry.updateStatus(0, true);
+        registry.updateStatus(0, PetRegistry.PetStatus.Lost);
 
         PetRegistry.Pet memory pet = registry.getPet(0);
-        assertTrue(pet.isMissing);
+        assertEq(uint(pet.status), uint(PetRegistry.PetStatus.Lost));
     }
 
     function testCannotUpdateIfNotOwner() public {
@@ -42,7 +42,7 @@ contract PetRegistryTest is Test {
 
         vm.prank(other);
         vm.expectRevert("Not pet owner");
-        registry.updateStatus(0, true);
+        registry.updateStatus(0, PetRegistry.PetStatus.Lost);
     }
 
     // --- EVENTS TESTS ---
@@ -60,8 +60,8 @@ contract PetRegistryTest is Test {
 
         vm.prank(owner);
         vm.expectEmit(true, false, false, true);
-        emit PetRegistry.PetStatusUpdated(0, true);
+        emit PetRegistry.PetStatusUpdated(0, PetRegistry.PetStatus.Lost);
 
-        registry.updateStatus(0, true);
+        registry.updateStatus(0, PetRegistry.PetStatus.Lost);
     }
 }
