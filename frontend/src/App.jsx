@@ -1,4 +1,3 @@
-import React from "react";
 import {
   getDefaultConfig,
   RainbowKitProvider,
@@ -7,10 +6,11 @@ import {
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { mainnet, sepolia } from "wagmi/chains";
+import "./App.css";
 
 const config = getDefaultConfig({
   appName: "Reunite Pets",
-  projectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+  projectId: "YOUR_WALLETCONNECT_PROJECT_ID", 
   chains: [sepolia, mainnet],
 });
 
@@ -21,9 +21,9 @@ export default function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <div style={{ textAlign: "center", padding: "2rem" }}>
+          <div className="app-container">
             <h1>🐾 Reunite Pets</h1>
-            <ConnectButton />
+            <ConnectButton label="Connect Wallet" />
           </div>
         </RainbowKitProvider>
       </QueryClientProvider>
